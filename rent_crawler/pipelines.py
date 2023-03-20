@@ -3,10 +3,10 @@ import hashlib
 import json
 import logging
 
-import redis as redis
+# import redis as redis
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
-from scrapyelasticsearch.scrapyelasticsearch import ElasticSearchPipeline
+# from scrapyelasticsearch.scrapyelasticsearch import ElasticSearchPipelinekc
 
 logging.getLogger('elasticsearch').setLevel(logging.ERROR)
 
@@ -53,7 +53,7 @@ class RedisDuplicatePipeline:
         return item
 
 
-class ElasticSearchAdapterPipeline(ElasticSearchPipeline):
-    def process_item(self, item, spider):
-        item = ItemAdapter(item).asdict()
-        return super().process_item(item, spider)
+# class ElasticSearchAdapterPipeline(ElasticSearchPipeline):
+#     def process_item(self, item, spider):
+#         item = ItemAdapter(item).asdict()
+#         return super().process_item(item, spider)

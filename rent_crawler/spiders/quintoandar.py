@@ -18,12 +18,12 @@ class QuintoAndarSpider(scrapy.Spider):
                 "business_context": "RENT",
                 "filters": {{
                     "map": {{
-                        "bounds_north": -23.50560423579402,
-                        "bounds_south": -23.595435764205977,
-                        "bounds_east": -46.58431220239025,
-                        "bounds_west": -46.68230579760971,
-                        "center_lat": -23.55052,
-                        "center_lng": -46.633309
+                        "bounds_north": -23.17620919448605,
+                        "bounds_south": -23.271175920207515,
+                        "bounds_east": -45.81129976123047,
+                        "bounds_west": -45.990514238769535,
+                        "center_lat": -23.22369255734678,
+                        "center_lng": -45.900907000000004
                     }},
                     "availability": "any",
                     "occupancy": "any",
@@ -32,9 +32,8 @@ class QuintoAndarSpider(scrapy.Spider):
                         "order": "desc"
                     }},
                     "page_size": {page_size},
-                    "offset": {offset},
-                    "search_dropdown_value": "Saúde, São Paulo - SP, Brasil"
-                }},
+                    "offset": {offset}
+                    }},
                 "return": [
                     "id",
                     "coverImage",
@@ -77,7 +76,7 @@ class QuintoAndarSpider(scrapy.Spider):
         page = self.start_page
         while page < self.start_page + self.pages_to_crawl:
             self.logger.info('Scrapping page %d', page)
-            json_data = json.dumps(json.loads(self.data.format(page_size=PAGE_SIZE, offset=(page - 1) * PAGE_SIZE)))
+            json_data = json.dumps(json.loads(self.data.format(page_size=100, offset=0)))
             yield scrapy.Request(url=self.start_url, method='POST', headers=self.headers, body=json_data)
             page += 1
 
@@ -86,7 +85,7 @@ class QuintoAndarSpider(scrapy.Spider):
         for result in json_response['hits']['hits']:
             source = result['_source']
             loader = RentalPropertyLoader(item=QuintoAndarProperty())
-            loader.add_value('code', result['_id'])
+            loader.add_value('code', f"QA_{result['_id']}")
             loader.add_value('address', self.get_address(source))
             loader.add_value('prices', self.get_prices(source))
             loader.add_value('details', self.get_details(source))
@@ -100,10 +99,12 @@ class QuintoAndarSpider(scrapy.Spider):
     @classmethod
     def get_address(cls, json_source: dict) -> Address:
         address_loader = AddressLoader(item=QuintoAndarAddress())
-        address_loader.add_value('street', json_source.get('address'))
-        address_loader.add_value('district', json_source.get('neighbourhood'))
-        address_loader.add_value('city', json_source.get('city'))
+        address_loader.add_value('rua', json_source.get('address'))
+        address_loader.add_value('bairro', json_source.get('neighbourhood'))
+        address_loader.add_value('cidade', json_source.get('city'))
         address_loader.add_value('region', json_source.get('regionName'))
+        address_loader.add_value('lat', )
+        address_loader.add_value('lng', )
         return address_loader.load_item()
 
     @classmethod

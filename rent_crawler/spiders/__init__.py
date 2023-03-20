@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import VRZapRentalProperty, VRZapAddress, VRZapPrices, VRZapDetails, VRZapTextDetails, \
+from rent_crawler.items import VRZapRentalProperty, VRZapAddress, IptuCondoPrices, VRZapDetails, VRZapTextDetails, \
     VRZapMediaDetails
 
 
@@ -34,10 +34,10 @@ class BaseVrZapSpider(scrapy.Spider):
     @classmethod
     def get_address(cls, json_address: dict) -> VRZapAddress:
         address_loader = AddressLoader(item=VRZapAddress())
-        address_loader.add_value('street', json_address.get('street'))
-        address_loader.add_value('street', json_address.get('streetNumber'))
-        address_loader.add_value('district', json_address.get('neighborhood'))
-        address_loader.add_value('city', json_address.get('city'))
+        address_loader.add_value('rua', json_address.get('street'))
+        address_loader.add_value('rua', json_address.get('streetNumber'))
+        address_loader.add_value('bairro', json_address.get('neighborhood'))
+        address_loader.add_value('cidade', json_address.get('city'))
         address_loader.add_value('complement', json_address.get('complement'))
         address_loader.add_value('cep', json_address.get('zipCode'))
         address_loader.add_value('zone', json_address.get('zone'))
@@ -45,10 +45,10 @@ class BaseVrZapSpider(scrapy.Spider):
         return address_loader.load_item()
 
     @classmethod
-    def get_prices(cls, json_prices: list) -> VRZapPrices:
+    def get_prices(cls, json_prices: list) -> IptuCondoPrices:
         for json_price in json_prices:
             if json_price.get('businessType') == 'RENTAL':
-                prices_loader = PricesLoader(item=VRZapPrices())
+                prices_loader = PricesLoader(item=IptuCondoPrices())
                 prices_loader.add_value('rent', json_price.get('price'))
                 prices_loader.add_value('condo', json_price.get('monthlyCondoFee'))
                 prices_loader.add_value('iptu', json_price.get('yearlyIptu'))
