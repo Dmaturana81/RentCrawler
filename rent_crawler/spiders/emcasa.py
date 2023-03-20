@@ -4,10 +4,8 @@ from datetime import datetime
 import scrapy
 from scrapy.loader import ItemLoader
 
-from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader, \
-    QuintoAndarAddress
-from rent_crawler.items import EmCasaProperty, Address, Prices, Details, TextDetails, EmCasaDetails, \
-    QuintoAndarMediaDetails, EmCasaAddress
+from rent_crawler.items import SellPropertyLoader, AddressLoader, PricesLoader, DetailsLoader
+from rent_crawler.items import EmCasaProperty, Address, Prices, EmCasaDetails, EmCasaAddress
 
 re_space = re.compile('\s{2,}')
 
@@ -65,11 +63,11 @@ class EmCasa(scrapy.Spider):
 
     def parse(self, response, **kwargs) -> EmCasaProperty:
         json_response = response.json()
-        self.logger.info(json_response)
+        # self.logger.info(json_response)
         self.total = json_response['data']['searchListings']['totalCount']
         for result in json_response['data']['searchListings']['listings']:
             # source = result['_source']
-            loader = RentalPropertyLoader(item=EmCasaProperty())
+            loader = SellPropertyLoader(item=EmCasaProperty())
             loader.add_value('code', f"EC_{result['id']}")
             loader.add_value('address', self.get_address(result['address']))
             loader.add_value('prices', self.get_prices(result))
@@ -93,7 +91,7 @@ class EmCasa(scrapy.Spider):
     @classmethod
     def get_prices(cls, json_source: dict) -> Prices:
         prices_loader = PricesLoader(item=Prices())
-        prices_loader.add_value('sell', json_source.get('price'))
+        prices_loader.add_value('price', json_source.get('price'))
         prices_loader.add_value('updated', datetime.now().timestamp())
         yield prices_loader.load_item()
 
@@ -108,22 +106,23 @@ class EmCasa(scrapy.Spider):
         return details_loader.load_item()
 
     @classmethod
-    def get_text_details(cls, json_source: dict) -> TextDetails:
-        text_details_loader = TextDetailsLoader()
-        text_details_loader.add_value('type', json_source['type'])
-        return text_details_loader.load_item()
-
-    @classmethod
-    def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
-        media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
-        media_details_loader.add_value('images', json_source.get('imageList'))
-        media_details_loader.add_value('captions', json_source.get('imageCaptionList'))
-        return media_details_loader.load_item()
-
-    @classmethod
     def get_site_url(cls, address):
         streetSlug = address['streetSlug']
         bairroSlug = address['neighborhoodSlug']
         citySlug = address['citySlug']
         stateSlug = address['stateSlug']
         return f"https://emcasa.com/imoveis/{stateSlug}/{citySlug}/{bairroSlug}/{streetSlug}/id-"
+
+    # @classmethod
+    # def get_text_details(cls, json_source: dict) -> TextDetails:
+    #     text_details_loader = TextDetailsLoader()
+    #     text_details_loader.add_value('type', json_source['type'])
+    #     return text_details_loader.load_item()
+
+    # @classmethod
+    # def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
+    #     media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
+    #     media_details_loader.add_value('images', json_source.get('imageList'))
+    #     media_details_loader.add_value('captions', json_source.get('imageCaptionList'))
+    #     return media_details_loader.load_item()
+

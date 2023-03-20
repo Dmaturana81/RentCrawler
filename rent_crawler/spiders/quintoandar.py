@@ -2,11 +2,10 @@ import json
 
 import scrapy
 from scrapy.loader import ItemLoader
+from datetime import datetime
 
-from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader, \
-    QuintoAndarAddress
-from rent_crawler.items import QuintoAndarProperty, Address, QuintoAndarPrices, Details, TextDetails, \
-    QuintoAndarMediaDetails
+from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
+from rent_crawler.items import QuintoAndarProperty, QuintoAndarAddress, QuintoAndarPrices, Details, TextDetails, QuintoAndarMediaDetails
 
 PAGE_SIZE = 11
 
@@ -97,22 +96,23 @@ class QuintoAndarSpider(scrapy.Spider):
             yield loader.load_item()
 
     @classmethod
-    def get_address(cls, json_source: dict) -> Address:
+    def get_address(cls, json_source: dict) -> QuintoAndarAddress:
         address_loader = AddressLoader(item=QuintoAndarAddress())
         address_loader.add_value('rua', json_source.get('address'))
         address_loader.add_value('bairro', json_source.get('neighbourhood'))
         address_loader.add_value('cidade', json_source.get('city'))
         address_loader.add_value('region', json_source.get('regionName'))
-        address_loader.add_value('lat', )
-        address_loader.add_value('lng', )
+        # address_loader.add_value('lat', )
+        # address_loader.add_value('lng', )
         return address_loader.load_item()
 
     @classmethod
     def get_prices(cls, json_source: dict) -> QuintoAndarPrices:
         prices_loader = PricesLoader(item=QuintoAndarPrices())
-        prices_loader.add_value('rent', json_source.get('rent'))
+        prices_loader.add_value('price', json_source.get('rent'))
         prices_loader.add_value('iptu_and_condo', json_source.get('iptuPlusCondominium'))
         prices_loader.add_value('total', json_source.get('totalCost'))
+        prices_loader.add_value('updated', datetime.now().timestamp())
         yield prices_loader.load_item()
 
     @classmethod

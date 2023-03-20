@@ -54,20 +54,16 @@ class AddressLoader(ItemLoader):
 #-------------------------------------------
 
 class Prices(Item):
-    sell = Field()
-    rent = Field()
+    price = Field()
     updated = Field()
     total = Field(output_processor=sum_numbers)
-
 
 class IptuCondoPrices(Prices):
     condo = Field()
     iptu = Field()
 
-
 class QuintoAndarPrices(Prices):
     iptu_and_condo = Field()
-
 
 class PricesLoader(ItemLoader):
     default_item_class = Prices
@@ -131,7 +127,11 @@ class VRZapMediaDetails(Item):
 # PROPERTY ITEMS
 #-------------------------------------------
 
+# RENTAL PROPERTIES
+#-----------------------------------
+
 class RentalProperty(Item):
+    type = 'Rent'
     code = Field(serializer=str)
     address = Field(serializer=Address)
     prices = Field(serializer=Prices)
@@ -141,7 +141,6 @@ class RentalProperty(Item):
     url = Field()
     item_id = Field()
 
-
 class VRZapRentalProperty(RentalProperty):
     address = Field(serializer=VRZapAddress)
     prices = Field(serializer=IptuCondoPrices)
@@ -150,19 +149,44 @@ class VRZapRentalProperty(RentalProperty):
     media = Field(serializer=VRZapMediaDetails)
     url = Field(output_processor=Join(''))
 
-
 class QuintoAndarProperty(RentalProperty):
     address = Field(serializer=QuintoAndarAddress)
     prices = Field(serializer=QuintoAndarPrices)
     media = Field(serializer=QuintoAndarMediaDetails)
     url = Field(output_processor=Join('/'))
 
-class EmCasaProperty(RentalProperty):
+class RentalPropertyLoader(ItemLoader):
+    default_item_class = RentalProperty
+    default_output_processor = TakeFirst()
+
+# SELL PROPERTIES
+#-----------------------------------
+
+class SellProperty(Item):
+    type = 'Sell'
+    code = Field(serializer=str)
+    address = Field(serializer=Address)
+    prices = Field(serializer=Prices)
+    details = Field(serializer=Details)
+    # text_details = Field(serializer=TextDetails)
+    # media = Field()
+    url = Field()
+    item_id = Field()
+
+class VRZapSellProperty(SellProperty):
+    address = Field(serializer=VRZapAddress)
+    prices = Field(serializer=Prices)
+    details = Field(serializer=VRZapDetails)
+    # text_details = Field(serializer=VRZapTextDetails)
+    # media = Field(serializer=VRZapMediaDetails)
+    url = Field(output_processor=Join(''))
+
+class EmCasaProperty(SellProperty):
     address = Field(serializer=EmCasaAddress)
     prices = Field(serializer=Prices)
     details = Field(serializer=EmCasaDetails)
     url = Field(output_processor=Join(''))
 
-class RentalPropertyLoader(ItemLoader):
-    default_item_class = RentalProperty
+class SellPropertyLoader(ItemLoader):
+    default_item_class = SellProperty
     default_output_processor = TakeFirst()
