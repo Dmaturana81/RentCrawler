@@ -104,7 +104,7 @@ class QuintoAndarSpider(scrapy.Spider):
         address_loader.add_value('region', json_source.get('regionName'))
         # address_loader.add_value('lat', )
         # address_loader.add_value('lng', )
-        return address_loader.load_item()
+        yield address_loader.load_item()
 
     @classmethod
     def get_prices(cls, json_source: dict) -> QuintoAndarPrices:
@@ -121,21 +121,22 @@ class QuintoAndarSpider(scrapy.Spider):
         details_loader.add_value('size', json_source.get('area'))
         details_loader.add_value('rooms', json_source.get('bedrooms'))
         details_loader.add_value('garages', json_source.get('parkingSpaces'))
-        return details_loader.load_item()
+        details_loader.add_value('utype', json_source.get('type'))
+        yield details_loader.load_item()
 
     @classmethod
     def get_text_details(cls, json_source: dict) -> TextDetails:
         text_details_loader = TextDetailsLoader()
-        text_details_loader.add_value('utype', json_source['type'])
-        return text_details_loader.load_item()
+        text_details_loader.add_value('type', json_source.get('type'))
+        yield text_details_loader.load_item()
 
     @classmethod
     def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
         media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
         media_details_loader.add_value('images', json_source.get('imageList'))
         media_details_loader.add_value('captions', json_source.get('imageCaptionList'))
-        return media_details_loader.load_item()
+        yield media_details_loader.load_item()
 
     @classmethod
     def get_site_url(cls):
-        return 'https://www.quintoandar.com.br'
+        yield 'https://www.quintoandar.com.br'

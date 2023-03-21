@@ -30,8 +30,8 @@ class Address(Item):
     bairro = Field()
     cidade = Field()
     estado = Field()
-    lat = Field()
-    lng = Field()
+    # lat = Field()
+    # lng = Field()
 
 class VRZapAddress(Address):
     complemento = Field()
@@ -146,7 +146,7 @@ class VRZapRentalProperty(RentalProperty):
     prices = Field(serializer=IptuCondoPrices)
     details = Field(serializer=VRZapDetails)
     text_details = Field(serializer=VRZapTextDetails)
-    media = Field(serializer=VRZapMediaDetails)
+    # media = Field(serializer=VRZapMediaDetails)
     url = Field(output_processor=Join(''))
 
 class QuintoAndarProperty(RentalProperty):
@@ -168,7 +168,7 @@ class SaleProperty(Item):
     address = Field(serializer=Address)
     prices = Field(serializer=Prices)
     details = Field(serializer=Details)
-    # text_details = Field(serializer=TextDetails)
+    text_details = Field(serializer=TextDetails)
     # media = Field()
     url = Field()
     item_id = Field()
@@ -177,14 +177,15 @@ class VRZapSaleProperty(SaleProperty):
     address = Field(serializer=VRZapAddress)
     prices = Field(serializer=IptuCondoPrices)
     details = Field(serializer=VRZapDetails)
-    # text_details = Field(serializer=VRZapTextDetails)
-    # media = Field(serializer=VRZapMediaDetails)
+    text_details = Field(serializer=VRZapTextDetails)
+    media = Field(serializer=VRZapMediaDetails)
     url = Field(output_processor=Join(''))
 
 class EmCasaProperty(SaleProperty):
     address = Field(serializer=EmCasaAddress)
     prices = Field(serializer=Prices)
     details = Field(serializer=EmCasaDetails)
+    media = Field(serializer=QuintoAndarMediaDetails)
     url = Field(output_processor=Join(''))
 
 class SalePropertyLoader(ItemLoader):

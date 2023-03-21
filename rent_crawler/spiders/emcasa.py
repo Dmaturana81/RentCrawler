@@ -4,8 +4,8 @@ from datetime import datetime
 import scrapy
 from scrapy.loader import ItemLoader
 
-from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader
-from rent_crawler.items import EmCasaProperty, Address, Prices, EmCasaDetails, EmCasaAddress
+from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
+from rent_crawler.items import EmCasaProperty, Address, Prices, EmCasaDetails, EmCasaAddress, TextDetails, QuintoAndarMediaDetails
 
 re_space = re.compile('\s{2,}')
 
@@ -56,24 +56,23 @@ class EmCasa(scrapy.Spider):
 
     def start_requests(self):
         while self.offset < self.total:
-            self.logger.info('Scrapping %d items', (self.offset + 100))
+            self.logger.info(f"going from {self.offset} ---> {self.offset + self.size}, with a total of {self.total}")
             json_data = json.dumps(json.loads(self.data.format(query = self.cquery, offset=self.offset, size=self.size)))
             yield scrapy.Request(url=self.start_url, method='POST', headers=self.headers, body=json_data)
             self.offset += self.size
 
     def parse(self, response, **kwargs) -> EmCasaProperty:
         json_response = response.json()
-        # self.logger.info(json_response)
         self.total = json_response['data']['searchListings']['totalCount']
         for result in json_response['data']['searchListings']['listings']:
             # source = result['_source']
-            loader = SellPropertyLoader(item=EmCasaProperty())
+            loader = SalePropertyLoader(item=EmCasaProperty())
             loader.add_value('code', f"EC_{result['id']}")
             loader.add_value('address', self.get_address(result['address']))
             loader.add_value('prices', self.get_prices(result))
             loader.add_value('details', self.get_details(result))
-            # loader.add_value('media', self.get_media_details(source))
-            # loader.add_value('text_details', self.get_text_details(source))
+            # loader.add_value('media', self.get_media_details(result))
+            loader.add_value('text_details', self.get_text_details(result))
             loader.add_value('url', self.get_site_url(result['address']))
             loader.add_value('url', result['id'])
             yield loader.load_item()
@@ -85,7 +84,7 @@ class EmCasa(scrapy.Spider):
         address_loader.add_value('bairro', json_source.get('neighborhood'))
         address_loader.add_value('cidade', json_source.get('city'))
         address_loader.add_value('estado', json_source.get('state'))
-        return address_loader.load_item()
+        yield address_loader.load_item()
 
 
     @classmethod
@@ -103,7 +102,7 @@ class EmCasa(scrapy.Spider):
         details_loader.add_value('garages', json_source.get('garageSpots'))
         details_loader.add_value('suites', json_source.get('suites'))
         details_loader.add_value('utype', json_source.get('type'))
-        return details_loader.load_item()
+        yield details_loader.load_item()
 
     @classmethod
     def get_site_url(cls, address):
@@ -111,18 +110,18 @@ class EmCasa(scrapy.Spider):
         bairroSlug = address['neighborhoodSlug']
         citySlug = address['citySlug']
         stateSlug = address['stateSlug']
-        return f"https://emcasa.com/imoveis/{stateSlug}/{citySlug}/{bairroSlug}/{streetSlug}/id-"
+        yield f"https://emcasa.com/imoveis/{stateSlug}/{citySlug}/{bairroSlug}/{streetSlug}/id-"
 
-    # @classmethod
-    # def get_text_details(cls, json_source: dict) -> TextDetails:
-    #     text_details_loader = TextDetailsLoader()
-    #     text_details_loader.add_value('type', json_source['type'])
-    #     return text_details_loader.load_item()
+    @classmethod
+    def get_text_details(cls, json_source: dict) -> TextDetails:
+        text_details_loader = TextDetailsLoader()
+        text_details_loader.add_value('type', json_source.get('type'))
+        yield text_details_loader.load_item()
 
-    # @classmethod
-    # def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
-    #     media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
-    #     media_details_loader.add_value('images', json_source.get('imageList'))
-    #     media_details_loader.add_value('captions', json_source.get('imageCaptionList'))
-    #     return media_details_loader.load_item()
+    @classmethod
+    def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
+        media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
+        media_details_loader.add_value('images', json_source.get('images'))
+        media_details_loader.add_value('captions', json_source.get('tags'))
+        yield media_details_loader.load_item()
 
