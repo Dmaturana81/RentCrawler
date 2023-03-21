@@ -126,7 +126,7 @@ class QuintoAndarSpider(scrapy.Spider):
     @classmethod
     def get_text_details(cls, json_source: dict) -> TextDetails:
         text_details_loader = TextDetailsLoader()
-        text_details_loader.add_value('type', json_source['type'])
+        text_details_loader.add_value('utype', json_source['type'])
         return text_details_loader.load_item()
 
     @classmethod

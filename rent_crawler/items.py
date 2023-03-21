@@ -77,7 +77,7 @@ class Details(Item):
     size = Field()
     rooms = Field()
     garages = Field()
-    type = Field()
+    utype = Field()
 
 class VRZapDetails(Details):
     size = Field(input_processor=bigger_than_zero)
@@ -162,8 +162,8 @@ class RentalPropertyLoader(ItemLoader):
 # SELL PROPERTIES
 #-----------------------------------
 
-class SellProperty(Item):
-    type = 'Sell'
+class SaleProperty(Item):
+    type = 'Sale'
     code = Field(serializer=str)
     address = Field(serializer=Address)
     prices = Field(serializer=Prices)
@@ -173,20 +173,20 @@ class SellProperty(Item):
     url = Field()
     item_id = Field()
 
-class VRZapSellProperty(SellProperty):
+class VRZapSaleProperty(SaleProperty):
     address = Field(serializer=VRZapAddress)
-    prices = Field(serializer=Prices)
+    prices = Field(serializer=IptuCondoPrices)
     details = Field(serializer=VRZapDetails)
     # text_details = Field(serializer=VRZapTextDetails)
     # media = Field(serializer=VRZapMediaDetails)
     url = Field(output_processor=Join(''))
 
-class EmCasaProperty(SellProperty):
+class EmCasaProperty(SaleProperty):
     address = Field(serializer=EmCasaAddress)
     prices = Field(serializer=Prices)
     details = Field(serializer=EmCasaDetails)
     url = Field(output_processor=Join(''))
 
-class SellPropertyLoader(ItemLoader):
-    default_item_class = SellProperty
+class SalePropertyLoader(ItemLoader):
+    default_item_class = SaleProperty
     default_output_processor = TakeFirst()

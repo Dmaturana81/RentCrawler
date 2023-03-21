@@ -4,7 +4,7 @@ from datetime import datetime
 import scrapy
 from scrapy.loader import ItemLoader
 
-from rent_crawler.items import SellPropertyLoader, AddressLoader, PricesLoader, DetailsLoader
+from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader
 from rent_crawler.items import EmCasaProperty, Address, Prices, EmCasaDetails, EmCasaAddress
 
 re_space = re.compile('\s{2,}')
@@ -102,7 +102,7 @@ class EmCasa(scrapy.Spider):
         details_loader.add_value('rooms', json_source.get('rooms'))
         details_loader.add_value('garages', json_source.get('garageSpots'))
         details_loader.add_value('suites', json_source.get('suites'))
-        details_loader.add_value('type', json_source.get('type'))
+        details_loader.add_value('utype', json_source.get('type'))
         return details_loader.load_item()
 
     @classmethod
