@@ -4,6 +4,7 @@ from datetime import datetime
 import scrapy
 from scrapy.loader import ItemLoader
 
+from rent_crawler.spiders import type2utype
 from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
 from rent_crawler.items import EmCasaProperty, Address, Prices, EmCasaDetails, EmCasaAddress, TextDetails, QuintoAndarMediaDetails
 
@@ -63,7 +64,7 @@ class EmCasa(scrapy.Spider):
 
     def parse(self, response, **kwargs) -> EmCasaProperty:
         json_response = response.json()
-        self.total = json_response['data']['searchListings']['totalCount']
+        self.total = json_response['data']['searchListings']['totalCount'] if json_response['data']['searchListings']['totalCount'] <= 10000 else 10000
         for result in json_response['data']['searchListings']['listings']:
             # source = result['_source']
             loader = SalePropertyLoader(item=EmCasaProperty())
@@ -101,7 +102,7 @@ class EmCasa(scrapy.Spider):
         details_loader.add_value('rooms', json_source.get('rooms'))
         details_loader.add_value('garages', json_source.get('garageSpots'))
         details_loader.add_value('suites', json_source.get('suites'))
-        details_loader.add_value('utype', json_source.get('type'))
+        details_loader.add_value('utype', type2utype(json_source.get('type')))
         yield details_loader.load_item()
 
     @classmethod

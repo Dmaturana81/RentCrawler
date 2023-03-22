@@ -3,6 +3,7 @@ import json
 import scrapy
 from scrapy.loader import ItemLoader
 from datetime import datetime
+from rent_crawler.spiders import type2utype
 
 from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
 from rent_crawler.items import QuintoAndarProperty, QuintoAndarAddress, QuintoAndarPrices, Details, TextDetails, QuintoAndarMediaDetails
@@ -121,7 +122,7 @@ class QuintoAndarSpider(scrapy.Spider):
         details_loader.add_value('size', json_source.get('area'))
         details_loader.add_value('rooms', json_source.get('bedrooms'))
         details_loader.add_value('garages', json_source.get('parkingSpaces'))
-        details_loader.add_value('utype', json_source.get('type'))
+        details_loader.add_value('utype', type2utype(json_source.get('type')))
         yield details_loader.load_item()
 
     @classmethod

@@ -1,6 +1,8 @@
 import scrapy
 
 from rent_crawler.spiders import BaseVrZapSpider
+from rent_crawler.spiders import type2utype
+
 
 PAGE_SIZE = 24
 

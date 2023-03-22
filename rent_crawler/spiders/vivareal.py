@@ -2,6 +2,8 @@ import scrapy
 from typing import Union
 
 from datetime import datetime
+from rent_crawler.spiders import type2utype
+
 from rent_crawler.items import AddressLoader, SalePropertyLoader, PricesLoader, DetailsLoader, TextDetailsLoader
 from rent_crawler.items import VRZapSaleProperty, VRZapAddress, IptuCondoPrices, VRZapDetails, VRZapTextDetails
 
@@ -59,7 +61,7 @@ class VivaRealSpider(scrapy.Spider):
     def parse(self, response, **kwargs) -> VRZapSaleProperty:
         json_response = response.json()
         # self.logger.info(json_response)
-        self.total = json_response['search']['totalCount']
+        self.total = json_response['search']['totalCount'] if json_response['search']['totalCount'] <= 10000 else 10000
         for result in json_response['search']['result']['listings']:
             data = result['listing']
             loader = SalePropertyLoader(item=VRZapSaleProperty())
@@ -114,7 +116,7 @@ class VivaRealSpider(scrapy.Spider):
         bathrooms = cls.get_item(json_details.get('bathrooms'))
         details_loader.add_value('bathrooms', bathrooms)
         unitTypes = cls.get_item(json_details.get('unitTypes'))
-        details_loader.add_value('utype', unitTypes )
+        details_loader.add_value('utype', type2utype(unitTypes) )
         yield details_loader.load_item()
 
     @classmethod

@@ -1,10 +1,44 @@
 import scrapy
 from scrapy.loader import ItemLoader
-
+from typing import Union
 from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
 from rent_crawler.items import VRZapRentalProperty, VRZapAddress, IptuCondoPrices, VRZapDetails, VRZapTextDetails, \
     VRZapMediaDetails
 
+
+types_dict = {
+    'FARM': 'farm',
+    'COMMERCIAL_ALLOTMENT_LAND': 'Land',
+    'APARTMENT': 'Apartment',
+    'COUNTRY_HOUSE': 'House',
+    'ALLOTMENT_LAND': 'Land',
+    'COMMERCIAL_PROPERTY': 'Commercial',
+    'CONDOMINIUM': 'Condominium',
+    'TWO_STORY_HOUSE': 'House',
+    'BUILDING': 'Building',
+    'OFFICE': 'Comercial',
+    'RESIDENTIAL_BUILDING': 'Building',
+    'HOME': 'House',
+    'SHED_DEPOSIT_WAREHOUSE': 'Warehouse',
+    'RESIDENTIAL_ALLOTMENT_LAND': 'Land',
+    'PENTHOUSE': 'Apartment',
+    'FLAT': 'Flat',
+    'BUSINESS': 'Commercial',
+    'COMMERCIAL_BUILDING': 'Commercial',
+    'Apartamento': 'Apartment',
+    'Cobertura': 'Apartment',
+    'Casa': 'House',
+    'CasaCondominio': 'Condominium',
+    'StudioOuKitchenette': 'Flat',
+    }
+
+def type2utype(type:Union[str, list, None]):
+    """
+    Function to transform the utype of the property to the universal utype
+    """
+    if isinstance(type, list):
+        type = type[0] if len(type) > 0 else ''
+    return types_dict[type] if type and type in types_dict.keys() else type
 
 class BaseVrZapSpider(scrapy.Spider):
     custom_settings = {
@@ -66,6 +100,7 @@ class BaseVrZapSpider(scrapy.Spider):
         details_loader.add_value('suites', json_listing.get('suites'))
         details_loader.add_value('bathrooms', json_listing.get('bathrooms'))
         details_loader.add_value('garages', json_listing.get('parkingSpaces'))
+        details_loader.add_value('utype', type2utype(json_listing['unitTypes']))
         return details_loader.load_item()
 
     @classmethod
