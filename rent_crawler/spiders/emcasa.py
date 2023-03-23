@@ -66,8 +66,8 @@ class EmCasa(scrapy.Spider):
         json_response = response.json()
         self.total = json_response['data']['searchListings']['totalCount'] if json_response['data']['searchListings']['totalCount'] <= 10000 else 10000
         for result in json_response['data']['searchListings']['listings']:
-            # source = result['_source']
             loader = SalePropertyLoader(item=EmCasaProperty())
+            loader.add_value('kind', 'Sale')
             loader.add_value('code', f"EC_{result['id']}")
             loader.add_value('address', self.get_address(result['address']))
             loader.add_value('prices', self.get_prices(result))

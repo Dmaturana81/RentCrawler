@@ -65,6 +65,10 @@ class VivaRealSpider(scrapy.Spider):
         for result in json_response['search']['result']['listings']:
             data = result['listing']
             loader = RentalPropertyLoader(item=VRZapRentalProperty())
+            if data.get('pricingInfos')[0]['businessType'] == 'SALE':
+              loader.add_value('kind', 'Sale')
+            else:
+              loader.add_value('kind','Rent')
             loader.add_value('code', f"VR_{data['id']}")
             loader.add_value('address', self.get_address(data['address']))
             loader.add_value('prices', self.get_prices(data['pricingInfos']))

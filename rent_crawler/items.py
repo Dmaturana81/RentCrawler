@@ -131,7 +131,7 @@ class VRZapMediaDetails(Item):
 #-----------------------------------
 
 class RentalProperty(Item):
-    type = 'Rent'
+    kind = Field(serializer = str)
     code = Field(serializer=str)
     address = Field(serializer=Address)
     prices = Field(serializer=Prices)
@@ -163,7 +163,7 @@ class RentalPropertyLoader(ItemLoader):
 #-----------------------------------
 
 class SaleProperty(Item):
-    type = 'Sale'
+    kind = Field(serializer=str)
     code = Field(serializer=str)
     address = Field(serializer=Address)
     prices = Field(serializer=Prices)
