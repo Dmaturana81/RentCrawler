@@ -11,7 +11,7 @@ from rent_crawler.items import VRZapSaleProperty, VRZapAddress, IptuCondoPrices,
 
 class VivaRealSpider(scrapy.Spider):
     api_base = 'https://glue-api.vivareal.com//v2/listings'
-    total = 1000
+    total = 10000
     size = 100
     offset = 0
     name = 'vivareal_sale'
