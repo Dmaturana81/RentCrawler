@@ -85,10 +85,10 @@ class QuintoAndarSpider(scrapy.Spider):
         for result in json_response['hits']['hits']:
             source = result['_source']
             loader = RentalPropertyLoader(item=QuintoAndarProperty())
-            if result.get('forRent'):
-              loader.add_value('kind', 'Rent')
-            else:
-              loader.add_value('kind','Sale')
+            # if result.get('forRent'):
+            #   loader.add_value('kind', 'Rent')
+            # else:
+            loader.add_value('kind','Sale')
             loader.add_value('code', f"QA_{result['_id']}")
             loader.add_value('address', self.get_address(source))
             loader.add_value('prices', self.get_prices(source))

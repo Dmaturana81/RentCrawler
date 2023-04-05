@@ -4,6 +4,7 @@ import json
 import logging
 
 # import redis as redis
+import pymongo
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 # from scrapyelasticsearch.scrapyelasticsearch import ElasticSearchPipelinekc
@@ -19,7 +20,43 @@ class RentCrawlerPipeline:
         item_hash.update(item_json.encode('utf-8'))
         item['item_id'] = item_hash.hexdigest()
         return item
+    
+class CorrectKind:
+    def process_item(self, item, spider):
+        if item['kind'] == 'Sale' and item['prices']['price'] < 100000:
+            item['kind'] = 'Rent'
+        elif item['kind'] == 'Rent' and item['prices']['price'] > 100000:
+            item['kind'] = 'Sale'
+        return item
 
+
+class MongoPipeline:
+
+    collection_name = 'houses'
+
+    def __init__(self, mongo_uri, mongo_db):
+        self.mongo_uri = mongo_uri
+        self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DATABASE', 'houses_db')
+        )
+
+    def open_spider(self, spider):
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+
+    def close_spider(self, spider):
+        self.client.close()
+
+    def process_item(self, item, spider):
+        self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        print(f"Inserted item {item['item_id']}")
+        return item
+    
 
 class RedisDuplicatePipeline:
     key_prefix = {

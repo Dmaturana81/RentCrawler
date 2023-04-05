@@ -6,7 +6,7 @@ from scrapy.loader import ItemLoader
 
 from rent_crawler.spiders import type2utype
 from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import EmCasaProperty, Address, Prices, EmCasaDetails, EmCasaAddress, TextDetails, QuintoAndarMediaDetails
+from rent_crawler.items import EmCasaSaleProperty, Address, Prices, EmCasaDetails, EmCasaAddress, TextDetails, QuintoAndarMediaDetails
 
 re_space = re.compile('\s{2,}')
 
@@ -62,11 +62,11 @@ class EmCasa(scrapy.Spider):
             yield scrapy.Request(url=self.start_url, method='POST', headers=self.headers, body=json_data)
             self.offset += self.size
 
-    def parse(self, response, **kwargs) -> EmCasaProperty:
+    def parse(self, response, **kwargs) -> EmCasaSaleProperty:
         json_response = response.json()
         self.total = json_response['data']['searchListings']['totalCount'] if json_response['data']['searchListings']['totalCount'] <= 10000 else 10000
         for result in json_response['data']['searchListings']['listings']:
-            loader = SalePropertyLoader(item=EmCasaProperty())
+            loader = SalePropertyLoader(item=EmCasaSaleProperty())
             loader.add_value('kind', 'Sale')
             loader.add_value('code', f"EC_{result['id']}")
             loader.add_value('address', self.get_address(result['address']))

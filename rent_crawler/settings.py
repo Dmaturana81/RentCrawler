@@ -22,14 +22,16 @@ TELNETCONSOLE_ENABLED = False
 
 ITEM_PIPELINES = {
     'rent_crawler.pipelines.RentCrawlerPipeline': 100,
+    'rent_crawler.pipelines.CorrectKind': 200,
     # 'rent_crawler.pipelines.RedisDuplicatePipeline': 200,
-    'scrapy_mongodb.MongoDBPipeline': 300,
+    'rent_crawler.pipelines.MongoPipeline': 300,
     # 'rent_crawler.pipelines.ElasticSearchAdapterPipeline': 400
 }
 
-# MONGODB_URI = 'mongodb://localhost:27017'
+MONGODB_URI = 'mongodb://localhost:27017'
 MONGODB_DATABASE = 'houses_db'
 MONGODB_COLLECTION = 'houses'
+MONGODB_REPLICA_SET=None
 # MONGODB_UNIQUE_KEY = 'item_id'
 # MONGODB_ADD_TIMESTAMP = True
 MONGODB_SEPARATE_COLLECTIONS = False
