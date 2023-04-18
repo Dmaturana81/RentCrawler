@@ -130,7 +130,7 @@ class VivaRealSpider(scrapy.Spider):
         # text_details_loader.add_value('characteristics', json_listing.get('amenities'))
         text_details_loader.add_value('title', json_listing.get('title'))
         # text_details_loader.add_value('contact', json_listing.get('advertiserContact').get('phones'))
-        # text_details_loader.add_value('type', json_listing['unitTypes'])
+        text_details_loader.add_value('type', json_listing.get('unitTypes'))
         yield text_details_loader.load_item()
 
     @classmethod

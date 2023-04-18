@@ -25,7 +25,7 @@ class CorrectKind:
     def process_item(self, item, spider):
         if item['kind'] == 'Sale' and item['prices']['price'] < 100000:
             item['kind'] = 'Rent'
-        elif item['kind'] == 'Rent' and item['prices']['price'] > 100000:
+        elif item['kind'] == 'Rent' and item['prices']['price'] >= 100000:
             item['kind'] = 'Sale'
         return item
 

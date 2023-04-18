@@ -106,13 +106,20 @@ class VivaRealSpider(scrapy.Spider):
     @classmethod
     def get_details(cls, json_details: dict) -> VRZapDetails:
         details_loader = DetailsLoader(item = VRZapDetails())
-        details_loader.add_value('size', json_details.get('totalAreas'))
-        details_loader.add_value('size', json_details.get('usableAreas'))
-        details_loader.add_value('rooms', json_details.get('bedrooms'))
-        details_loader.add_value('garages', json_details.get('parkingSpaces'))
-        details_loader.add_value('suites', json_details.get('suites'))
-        details_loader.add_value('bathrooms', json_details.get('bathrooms'))
-        details_loader.add_value('utype', json_details.get('unitTypes') )
+        totalAreas = cls.get_item(json_details.get('totalAreas'))
+        details_loader.add_value('size', totalAreas)
+        usableAreas = cls.get_item(json_details.get('usableAreas'))
+        details_loader.add_value('size', usableAreas)
+        bedrooms = cls.get_item(json_details.get('bedrooms'))
+        details_loader.add_value('rooms', bedrooms)
+        parkingSpaces = cls.get_item(json_details.get('parkingSpaces'))
+        details_loader.add_value('garages', parkingSpaces)
+        suites = cls.get_item(json_details.get('suites'))
+        details_loader.add_value('suites', suites)
+        bathrooms = cls.get_item(json_details.get('bathrooms'))
+        details_loader.add_value('bathrooms', bathrooms)
+        unitTypes = cls.get_item(json_details.get('unitTypes'))
+        details_loader.add_value('utype', type2utype(unitTypes) )
         yield details_loader.load_item()
 
     @classmethod
@@ -128,7 +135,6 @@ class VivaRealSpider(scrapy.Spider):
     @classmethod
     def get_item(cls, value: Union[list, None]):
         if isinstance(value, list) and len(value)>0:
-            print(value[0])
             return value[0]
         else:
             return 0
