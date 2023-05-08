@@ -1,11 +1,12 @@
 import json
 from datetime import datetime
+import unidecode
 import scrapy
 from scrapy.loader import ItemLoader
 
 from rent_crawler.spiders import type2utype
-from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import TopSaleProperty, TopAddress, Prices, EmCasaDetails, TextDetails, QuintoAndarMediaDetails
+from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader, ItemLoader
+from rent_crawler.items import TopSaleProperty, TopAddress, Prices, EmCasaDetails, TextDetails, TopimoveisMediaDetails
 
 
 class Topimoveis(scrapy.Spider):
@@ -101,6 +102,7 @@ class Topimoveis(scrapy.Spider):
             loader.add_value('prices', self.get_prices(result))
             loader.add_value('details', self.get_details(result))
             loader.add_value('text_details', self.get_text_details(result))
+            loader.add_value('media', self.get_media_details(result))
             loader.add_value('url', self.get_site_url(result))
             loader.add_value('url', str(result['idtProperty']))
             yield loader.load_item()
@@ -139,22 +141,24 @@ class Topimoveis(scrapy.Spider):
 
     @classmethod
     def get_site_url(cls, address):
-        type = address.get('namCategory')
+        type = unidecode.unidecode(address.get('namCategory'))
         if type:
             type = type.replace(' ','-')
-        city = address.get('namCity')
+        city = unidecode.unidecode(address.get('namCity'))
         if city:
             city = city.replace(' ','-')
-        bairro = address.get('namDistrict')
+        bairro = unidecode.unidecode(address.get('namDistrict'))
         if bairro:
             bairro = bairro.replace(' ','-')
-        condname = address.get('namCondominium')
+        condname = unidecode.unidecode(address.get('namCondominium'))
         if condname:
-            condname = condname.replace(' ','-')
+            condname = unidecode.unidecode(condname.replace(' ','-'))
             bairoo_condo = f"{bairro}-{condname}"
         else:
             bairoo_condo = f"{bairro}"
-        yield f"https://emcasa.com/imoveis/locacao/{type}/{city}/{bairoo_condo}/"
+        # "https://topimoveissjc.com.br/imovel/venda/apartamentos/sao-jose-dos-campos/floradas-de-sao-jose-edificio-esther/1119"
+        yield f"https://topimoveissjc.com.br/imovel/venda/{type}/{city}/{bairoo_condo}/"
+
 
     @classmethod
     def get_text_details(cls, json_source: dict) -> TextDetails:
@@ -163,9 +167,9 @@ class Topimoveis(scrapy.Spider):
         yield text_details_loader.load_item()
 
     @classmethod
-    def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
-        media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
-        media_details_loader.add_value('images', json_source.get('images'))
-        media_details_loader.add_value('captions', json_source.get('tags'))
+    def get_media_details(cls, json_source: dict) -> TopimoveisMediaDetails:
+        media_details_loader = ItemLoader(item=TopimoveisMediaDetails())
+        media_details_loader.add_value('images', json_source.get('jsonPhotos'))
+        media_details_loader.add_value('captions', json_source.get('jsonPhotos'))
         yield media_details_loader.load_item()
 

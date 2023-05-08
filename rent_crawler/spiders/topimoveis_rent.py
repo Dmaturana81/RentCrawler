@@ -4,8 +4,8 @@ import scrapy
 from scrapy.loader import ItemLoader
 
 from rent_crawler.spiders import type2utype
-from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import TopProperty, TopAddress, Prices, EmCasaDetails, TextDetails, QuintoAndarMediaDetails
+from rent_crawler.items import RentalPropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader, ItemLoader
+from rent_crawler.items import TopProperty, TopAddress, Prices, EmCasaDetails, TextDetails, TopimoveisMediaDetails
 
 
 class Topimoveis(scrapy.Spider):
@@ -74,7 +74,7 @@ class Topimoveis(scrapy.Spider):
     }
 
     custom_settings = {
-        'ELASTICSEARCH_INDEX': 'rent-quintoandar'
+        'ELASTICSEARCH_INDEX': 'rent-topimoveis'
     }
 
     def __init__(self, *args, **kwargs):
@@ -155,7 +155,7 @@ class Topimoveis(scrapy.Spider):
             bairoo_condo = f"{bairro}-{condname}"
         else:
             bairoo_condo = f"{bairro}"
-        yield f"https://emcasa.com/imoveis/locacao/{type}/{city}/{bairoo_condo}/"
+        yield f"https://topimoveissjc.com.br/imovel/locacao/{type}/{city}/{bairoo_condo}/"
 
     @classmethod
     def get_text_details(cls, json_source: dict) -> TextDetails:
@@ -164,9 +164,10 @@ class Topimoveis(scrapy.Spider):
         yield text_details_loader.load_item()
 
     @classmethod
-    def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
-        media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
-        media_details_loader.add_value('images', json_source.get('images'))
-        media_details_loader.add_value('captions', json_source.get('tags'))
+    def get_media_details(cls, json_source: dict) -> TopimoveisMediaDetails:
+        media_details_loader = ItemLoader(item=TopimoveisMediaDetails())
+        media_details_loader.add_value('images', json_source.get('jsonPhotos'))
+        media_details_loader.add_value('captions', json_source.get('jsonPhotos'))
         yield media_details_loader.load_item()
+
 

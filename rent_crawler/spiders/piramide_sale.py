@@ -4,13 +4,12 @@ from typing import Union
 from datetime import datetime
 from rent_crawler.spiders import type2utype
 
-from rent_crawler.items import AddressLoader, SalePropertyLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import VRZapSaleProperty, VRZapAddress, IptuCondoPrices, VRZapDetails, VRZapTextDetails
+from rent_crawler.items import AddressLoader, SalePropertyLoader, PricesLoader, DetailsLoader, TextDetailsLoader, ItemLoader
+from rent_crawler.items import PiramideSaleProperty, Address, IptuCondoPrices, VRZapDetails, VRZapTextDetails, PiramideMediaDetails
 
 
 
 class VivaRealSpider(scrapy.Spider):
-    api_base = 'https://glue-api.vivareal.com//v2/listings'
     total = 1000
     size = 12
     page = 1
@@ -18,7 +17,6 @@ class VivaRealSpider(scrapy.Spider):
     name = 'piramide_sale'
     start_url = 'https://www.piramideimoveissjc.com.br/api/listings/a-venda/sao-jose-dos-campos?pagina={page}'
 
-    date = datetime.utcnow().strftime("%a, %d %b %Y %T")
     headers = {
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/111.0',
         'accept': '*/*',
@@ -27,7 +25,7 @@ class VivaRealSpider(scrapy.Spider):
         'x-requested-with': 'XMLHttpRequest',
         'dnt': '1',
         'connection': 'keep-alive',
-        'referer': 'https://www.piramideimoveissjc.com.br/imoveis/para-alugar/sao-jose-dos-campos',
+        'referer': 'https://www.piramideimoveissjc.com.br/imoveis/a-venda/sao-jose-dos-campos',
         'sec-fetch-dest': 'empty',
         'sec-fetch-mode': 'cors',
         'sec-fetch-site': 'same-origin',
@@ -46,48 +44,43 @@ class VivaRealSpider(scrapy.Spider):
 
     def parse(self, response, **kwargs) -> SalePropertyLoader:
         json_response = response.json()
-        # self.logger.info(json_response)
         self.total = json_response['count'] if json_response['count'] <= 10000 else 10000
         for result in json_response['data']:
-            loader = SalePropertyLoader(item=VRZapSaleProperty())
-            if result.get('show_price') == 'RENT':
-              loader.add_value('kind', 'Rent')
+            loader = SalePropertyLoader(item=PiramideSaleProperty())
+            if 'FOR_SALE' in result['property_purposes']:
+                kind ='Sale'
+                price_key = 'sale_price'
             else:
-              loader.add_value('kind','Sale')
-
+                continue
+            loader.add_value('kind',kind)
             loader.add_value('code', f"PI_{result.get('property_full_reference').split('-')[0]}")
             loader.add_value('address', self.get_address(result))
-            loader.add_value('prices', self.get_prices(result))
+            loader.add_value('prices', self.get_prices(result, price_key))
             loader.add_value('details', self.get_details(result))
             loader.add_value('text_details', self.get_text_details(result))
+            loader.add_value('media', self.get_media_details(result))
             loader.add_value('url', self.get_site_url())
             loader.add_value('url', result.get('url'))
             yield loader.load_item()
 
     @classmethod
-    def get_address(cls, json_address: dict) -> VRZapAddress:
-        address_loader = AddressLoader(item=VRZapAddress())
+    def get_address(cls, json_address: dict) -> Address:
+        address_loader = AddressLoader(item=Address())
         address_loader.add_value('rua', json_address.get('street'))
-        # streetNumber = cls.get_item()
-        # address_loader.add_value('rua', json_address.get('streetNumber'))
         address_loader.add_value('bairro', json_address.get('neighborhood'))
         address_loader.add_value('cidade', json_address.get('city'))
         address_loader.add_value('estado', json_address.get('state'))
-        # address_loader.add_value('location', json_address.get('point'))
-        # address_loader.add_value('lat', json_address['point'].get('lat'))
-        # address_loader.add_value('lng', json_address['point'].get('lon'))
-        # address_loader.add_value('cep', json_address.get('zipCode'))
-        # address_loader.add_value('zone', json_address.get('zone'))
         yield address_loader.load_item()
 
     @classmethod
-    def get_prices(cls, json_price: dict) -> IptuCondoPrices:
+    def get_prices(cls, json_price: dict, price_key:str) -> IptuCondoPrices:
         prices_loader = PricesLoader(item=IptuCondoPrices())
         price_dict = json_price[0] if isinstance(json_price, list) else json_price
-        prices_loader.add_value('price', price_dict.get('sale_price'))
+        prices_loader.add_value('price', price_dict.get(price_key))
         prices_loader.add_value('updated', datetime.now().timestamp())
         prices_loader.add_value('iptu', price_dict.get('property_tax'))
         prices_loader.add_value('condo', price_dict.get('condo_fees'))
+        #Add all values into the total
         yield prices_loader.load_item()
 
     @classmethod
@@ -95,16 +88,22 @@ class VivaRealSpider(scrapy.Spider):
         details_loader = DetailsLoader(item=VRZapDetails())
         totalAreas = cls.get_item(json_details.get('area'))
         details_loader.add_value('size', totalAreas)
-        # usableAreas = cls.get_item(json_details.get('usableAreas'))
-        # details_loader.add_value('size', usableAreas)
+
+        usableAreas = cls.get_item(json_details.get('usableAreas'))
+        details_loader.add_value('size', usableAreas)
+
         bedrooms = cls.get_item(json_details.get('bedrooms'))
         details_loader.add_value('rooms', bedrooms)
+        
         parkingSpaces = cls.get_item(json_details.get('garages'))
         details_loader.add_value('garages', parkingSpaces)
+        
         suites = cls.get_item(json_details.get('suites'))
         details_loader.add_value('suites', suites)
+        
         bathrooms = cls.get_item(json_details.get('bathrooms'))
         details_loader.add_value('bathrooms', bathrooms)
+        
         details_loader.add_value('utype', type2utype(json_details.get('property_type')) )
         yield details_loader.load_item()
 
@@ -114,9 +113,16 @@ class VivaRealSpider(scrapy.Spider):
         text_details_loader.add_value('description', json_listing.get('listing_description'))
         text_details_loader.add_value('characteristics', json_listing.get('amenities'))
         text_details_loader.add_value('title', json_listing.get('website_title'))
-        # text_details_loader.add_value('contact', json_listing.get('advertiserContact').get('phones'))
+        text_details_loader.add_value('contact', json_listing.get('contacts'))
         text_details_loader.add_value('type', json_listing.get('property_type'))
         yield text_details_loader.load_item()
+
+    @classmethod
+    def get_media_details(cls, json_listing: dict) -> PiramideMediaDetails:
+        media_details_loader = ItemLoader(item=PiramideMediaDetails())
+        media_details_loader.add_value('images', json_listing.get('photos'))
+        media_details_loader.add_value('video', json_listing.get('video_url'))
+        yield media_details_loader.load_item()
 
     @classmethod
     def get_item(cls, value: Union[list, None]):

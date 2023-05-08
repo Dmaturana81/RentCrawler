@@ -4,13 +4,12 @@ from typing import Union
 from datetime import datetime
 from rent_crawler.spiders import type2utype
 
-from rent_crawler.items import AddressLoader, RentalPropertyLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import VRZapRentalProperty, VRZapAddress, IptuCondoPrices, VRZapDetails, VRZapTextDetails
+from rent_crawler.items import AddressLoader, RentalPropertyLoader, PricesLoader, DetailsLoader, TextDetailsLoader, ItemLoader
+from rent_crawler.items import PiramideRentalProperty, Address, IptuCondoPrices, VRZapDetails, VRZapTextDetails, PiramideMediaDetails
 
 
 
 class VivaRealSpider(scrapy.Spider):
-    api_base = 'https://glue-api.vivareal.com//v2/listings'
     total = 1000
     size = 12
     page = 1
@@ -44,50 +43,48 @@ class VivaRealSpider(scrapy.Spider):
             self.offset += self.size
             self.page += 1
 
-    def parse(self, response, **kwargs) -> VRZapRentalProperty:
+    def parse(self, response, **kwargs) -> PiramideRentalProperty:
         json_response = response.json()
-        # self.logger.info(json_response)
         self.total = json_response['count'] if json_response['count'] <= 1000 else 1000
         for result in json_response['data']:
-            loader = RentalPropertyLoader(item=VRZapRentalProperty())
-            if result.get('show_price') == 'RENT':
-              loader.add_value('kind', 'Rent')
+            loader = RentalPropertyLoader(item=PiramideRentalProperty())
+            if 'FOR_RENT' in result['property_purposes']:
+                kind ='Rent'
+                price_key = 'rent_price'
             else:
-              loader.add_value('kind','Sale')
-
+                continue
+            loader.add_value('kind',kind)
             loader.add_value('code', f"PI_{result.get('property_full_reference').split('-')[0]}")
             loader.add_value('address', self.get_address(result))
-            loader.add_value('prices', self.get_prices(result))
+            loader.add_value('prices', self.get_prices(result, price_key))
             loader.add_value('details', self.get_details(result))
             loader.add_value('text_details', self.get_text_details(result))
+            loader.add_value('media', self.get_media_details(result))
             loader.add_value('url', self.get_site_url())
             loader.add_value('url', result.get('url'))
             yield loader.load_item()
 
     @classmethod
-    def get_address(cls, json_address: dict) -> VRZapAddress:
-        address_loader = AddressLoader(item=VRZapAddress())
+    def get_address(cls, json_address: dict) -> Address:
+        address_loader = AddressLoader(item=Address())
         address_loader.add_value('rua', json_address.get('street'))
-        # streetNumber = cls.get_item()
-        # address_loader.add_value('rua', json_address.get('streetNumber'))
         address_loader.add_value('bairro', json_address.get('neighborhood'))
         address_loader.add_value('cidade', json_address.get('city'))
         address_loader.add_value('estado', json_address.get('state'))
-        # address_loader.add_value('location', json_address.get('point'))
-        # address_loader.add_value('lat', json_address['point'].get('lat'))
-        # address_loader.add_value('lng', json_address['point'].get('lon'))
-        # address_loader.add_value('cep', json_address.get('zipCode'))
-        # address_loader.add_value('zone', json_address.get('zone'))
         yield address_loader.load_item()
 
     @classmethod
-    def get_prices(cls, json_price: dict) -> IptuCondoPrices:
+    def get_prices(cls, json_price: dict, price_key:str) -> IptuCondoPrices:
         prices_loader = PricesLoader(item=IptuCondoPrices())
         price_dict = json_price[0] if isinstance(json_price, list) else json_price
-        prices_loader.add_value('price', price_dict.get('rent_price'))
+        prices_loader.add_value('price', price_dict.get(price_key))
         prices_loader.add_value('updated', datetime.now().timestamp())
         prices_loader.add_value('iptu', price_dict.get('property_tax'))
         prices_loader.add_value('condo', price_dict.get('condo_fees'))
+        #Add all values into the total
+        prices_loader.add_value('total', price_dict.get(price_key))
+        prices_loader.add_value('total', price_dict.get('property_tax'))
+        prices_loader.add_value('total', price_dict.get('condo_fees'))
         yield prices_loader.load_item()
 
     @classmethod
@@ -114,9 +111,17 @@ class VivaRealSpider(scrapy.Spider):
         text_details_loader.add_value('description', json_listing.get('listing_description'))
         text_details_loader.add_value('characteristics', json_listing.get('amenities'))
         text_details_loader.add_value('title', json_listing.get('website_title'))
-        # text_details_loader.add_value('contact', json_listing.get('advertiserContact').get('phones'))
+        text_details_loader.add_value('contact', json_listing.get('contacts'))
         text_details_loader.add_value('type', json_listing.get('property_type'))
         yield text_details_loader.load_item()
+
+    @classmethod
+    def get_media_details(cls, json_listing: dict) -> PiramideMediaDetails:
+        media_details_loader = ItemLoader(item=PiramideMediaDetails())
+        media_details_loader.add_value('images', json_listing.get('photos'))
+        media_details_loader.add_value('video', json_listing.get('video_url'))
+        yield media_details_loader.load_item()
+
 
     @classmethod
     def get_item(cls, value: Union[list, None]):

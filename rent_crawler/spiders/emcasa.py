@@ -6,7 +6,7 @@ from scrapy.loader import ItemLoader
 
 from rent_crawler.spiders import type2utype
 from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import EmCasaSaleProperty, Address, Prices, EmCasaDetails, EmCasaAddress, TextDetails, QuintoAndarMediaDetails
+from rent_crawler.items import EmCasaSaleProperty, Address, Prices, EmCasaDetails, EmCasaAddress, TextDetails, EmCasaMediaDetails
 
 re_space = re.compile('\s{2,}')
 
@@ -72,7 +72,7 @@ class EmCasa(scrapy.Spider):
             loader.add_value('address', self.get_address(result['address']))
             loader.add_value('prices', self.get_prices(result))
             loader.add_value('details', self.get_details(result))
-            # loader.add_value('media', self.get_media_details(result))
+            loader.add_value('media', self.get_media_details(result))
             loader.add_value('text_details', self.get_text_details(result))
             loader.add_value('url', self.get_site_url(result['address']))
             loader.add_value('url', result['id'])
@@ -82,6 +82,7 @@ class EmCasa(scrapy.Spider):
     def get_address(cls, json_source: dict) -> Address:
         address_loader = AddressLoader(item=EmCasaAddress())
         address_loader.add_value('rua', json_source.get('street'))
+        address_loader.add_value('rua', json_source.get('streetNumber'))
         address_loader.add_value('bairro', json_source.get('neighborhood'))
         address_loader.add_value('cidade', json_source.get('city'))
         address_loader.add_value('estado', json_source.get('state'))
@@ -120,8 +121,8 @@ class EmCasa(scrapy.Spider):
         yield text_details_loader.load_item()
 
     @classmethod
-    def get_media_details(cls, json_source: dict) -> QuintoAndarMediaDetails:
-        media_details_loader = ItemLoader(item=QuintoAndarMediaDetails())
+    def get_media_details(cls, json_source: dict) -> EmCasaMediaDetails:
+        media_details_loader = ItemLoader(item=EmCasaMediaDetails())
         media_details_loader.add_value('images', json_source.get('images'))
         media_details_loader.add_value('captions', json_source.get('tags'))
         yield media_details_loader.load_item()
