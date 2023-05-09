@@ -24,7 +24,7 @@ ITEM_PIPELINES = {
     'rent_crawler.pipelines.RentCrawlerPipeline': 100,
     'rent_crawler.pipelines.CorrectKind': 200,
     # 'rent_crawler.pipelines.RedisDuplicatePipeline': 200,
-    'rent_crawler.pipelines.MongoPipeline': 300,
+    # 'rent_crawler.pipelines.MongoPipeline': 300,
     # 'rent_crawler.pipelines.ElasticSearchAdapterPipeline': 400
 }
 

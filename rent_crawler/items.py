@@ -24,6 +24,7 @@ to_lower = MapCompose( str.lower)
 
 filter_images = MapCompose(lambda media: media.get('url') if media.get('type') == 'IMAGE' else None)
 filter_videos = MapCompose(lambda media: media.get('url') if media.get('type') == 'VIDEO' else None)
+filter_images_top = MapCompose(lambda media: media.get('urlPhoto'))
 
 format_quintoandar_image_url = MapCompose(lambda img: "https://www.quintoandar.com.br/img/med/" + img)
 fromat_piramide_images = MapCompose(lambda img: img['picture_full'])
@@ -239,7 +240,7 @@ class TopSaleProperty(SaleProperty):
     address = Field(serializer=TopAddress)
     prices = Field(serializer=Prices)
     details = Field(serializer=EmCasaDetails)
-    media = Field(serializer=QuintoAndarMediaDetails)
+    media = Field(serializer=TopimoveisMediaDetails)
     url = Field(output_processor=Join(''))
 
 class EmCasaSaleProperty(SaleProperty):

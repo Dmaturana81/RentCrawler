@@ -4,6 +4,7 @@ import unidecode
 import scrapy
 from scrapy.loader import ItemLoader
 
+from ast import literal_eval
 from rent_crawler.spiders import type2utype
 from rent_crawler.items import SalePropertyLoader, AddressLoader, PricesLoader, DetailsLoader, TextDetailsLoader, ItemLoader
 from rent_crawler.items import TopSaleProperty, TopAddress, Prices, EmCasaDetails, TextDetails, TopimoveisMediaDetails
@@ -66,7 +67,7 @@ class Topimoveis(scrapy.Spider):
         'Origin':'https://www.topimoveissjc.com.br',
         'DNT': 1,
         'Connection': 'keep-alive',
-        'Referer': 'https://www.topimoveissjc.com.br/alugar/sao-jose-dos-campos-sp',
+        # 'Referer': 'https://www.topimoveissjc.com.br/alugar/sao-jose-dos-campos-sp',
         'Cookie': 'cookieMold=true',
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
@@ -150,7 +151,7 @@ class Topimoveis(scrapy.Spider):
         bairro = unidecode.unidecode(address.get('namDistrict'))
         if bairro:
             bairro = bairro.replace(' ','-')
-        condname = unidecode.unidecode(address.get('namCondominium'))
+        condname = unidecode.unidecode(address.get('namCondominium')) if address.get('namCondominium') else None
         if condname:
             condname = unidecode.unidecode(condname.replace(' ','-'))
             bairoo_condo = f"{bairro}-{condname}"
@@ -169,7 +170,7 @@ class Topimoveis(scrapy.Spider):
     @classmethod
     def get_media_details(cls, json_source: dict) -> TopimoveisMediaDetails:
         media_details_loader = ItemLoader(item=TopimoveisMediaDetails())
-        media_details_loader.add_value('images', json_source.get('jsonPhotos'))
-        media_details_loader.add_value('captions', json_source.get('jsonPhotos'))
+        media_details_loader.add_value('images', literal_eval(json_source.get('jsonPhotos')))
+        media_details_loader.add_value('captions', literal_eval(json_source.get('jsonPhotos')))
         yield media_details_loader.load_item()
 
