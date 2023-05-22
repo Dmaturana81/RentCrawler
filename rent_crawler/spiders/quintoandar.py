@@ -67,7 +67,7 @@ class QuintoAndarSpider(scrapy.Spider):
         'ELASTICSEARCH_INDEX': 'rent-quintoandar'
     }
 
-    def __init__(self, start_page=1, pages_to_crawl=1, *args, **kwargs):
+    def __init__(self, start_page=1, pages_to_crawl=2, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.start_page = int(start_page)
         self.pages_to_crawl = int(pages_to_crawl)
