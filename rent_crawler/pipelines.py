@@ -54,7 +54,7 @@ class MongoPipeline:
 
     def process_item(self, item, spider):
         self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
-        print(f"Inserted item {item['item_id']}")
+        # print(f"Inserted item {item['item_id']}")
         return item
     
 

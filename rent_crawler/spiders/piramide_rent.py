@@ -1,7 +1,7 @@
 import scrapy
 from typing import Union
 
-from datetime import datetime
+from datetime import datetime, date
 from rent_crawler.spiders import type2utype
 
 from rent_crawler.items import AddressLoader, RentalPropertyLoader, PricesLoader, DetailsLoader, TextDetailsLoader, ItemLoader
@@ -35,6 +35,11 @@ class VivaRealSpider(scrapy.Spider):
         'content-type': 'application/json'
         }
 
+    @classmethod
+    def update_settings(cls, settings):
+        super().update_settings(settings)
+        settings.set("LOG_FILE", f'{date.today().strftime("%y_%m_%d")}_PYr_spider_log.txt', priority="spider")
+
     def start_requests(self):
         while self.offset  <= self.total:
             self.logger.info(f"going from {self.offset} ---> {self.offset + self.size}, with a total of {self.total}")
@@ -55,6 +60,7 @@ class VivaRealSpider(scrapy.Spider):
                 continue
             loader.add_value('kind',kind)
             loader.add_value('code', f"PI_{result.get('property_full_reference').split('-')[0]}")
+            loader.add_value('code_org', f"PI_{result.get('property_full_reference')}")
             loader.add_value('address', self.get_address(result))
             loader.add_value('prices', self.get_prices(result, price_key))
             loader.add_value('details', self.get_details(result))

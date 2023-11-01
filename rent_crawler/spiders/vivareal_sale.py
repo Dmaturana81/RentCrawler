@@ -1,11 +1,12 @@
 import scrapy
 from typing import Union
 
-from datetime import datetime
+from datetime import datetime, date
 from rent_crawler.spiders import type2utype
 
+from scrapy.loader import ItemLoader
 from rent_crawler.items import AddressLoader, SalePropertyLoader, PricesLoader, DetailsLoader, TextDetailsLoader
-from rent_crawler.items import VRZapSaleProperty, VRZapAddress, IptuCondoPrices, VRZapDetails, VRZapTextDetails
+from rent_crawler.items import VRZapSaleProperty, VRZapAddress, IptuCondoPrices, VRZapDetails, VRZapTextDetails, VRZapMediaDetails
 
 
 
@@ -51,6 +52,11 @@ class VivaRealSpider(scrapy.Spider):
         'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/110.0'
     }
 
+    @classmethod
+    def update_settings(cls, settings):
+        super().update_settings(settings)
+        settings.set("LOG_FILE", f'{date.today().strftime("%y_%m_%d")}_VRs_spider_log.txt', priority="spider")
+
     def start_requests(self):
         while self.offset + self.size <= self.total:
             self.logger.info(f"going from {self.offset} ---> {self.offset + self.size}, with a total of {self.total}")
@@ -74,6 +80,7 @@ class VivaRealSpider(scrapy.Spider):
             loader.add_value('prices', self.get_prices(data['pricingInfos']))
             loader.add_value('details', self.get_details(data))
             loader.add_value('text_details', self.get_text_details(data))
+            loader.add_value('media', self.get_media_details(result['medias']))
             loader.add_value('url', self.get_site_url())
             loader.add_value('url', result['link']['href'])
             yield loader.load_item()
@@ -127,11 +134,19 @@ class VivaRealSpider(scrapy.Spider):
     def get_text_details(cls, json_listing: dict) -> VRZapTextDetails:
         text_details_loader = TextDetailsLoader(item=VRZapTextDetails())
         text_details_loader.add_value('description', json_listing.get('description'))
-        # text_details_loader.add_value('characteristics', json_listing.get('amenities'))
+        text_details_loader.add_value('characteristics', json_listing.get('amenities'))
         text_details_loader.add_value('title', json_listing.get('title'))
         # text_details_loader.add_value('contact', json_listing.get('advertiserContact').get('phones'))
         text_details_loader.add_value('type', json_listing.get('unitTypes'))
         yield text_details_loader.load_item()
+
+    @classmethod
+    def get_media_details(cls, json_source: dict) -> VRZapMediaDetails:
+        media_details_loader = ItemLoader(item=VRZapMediaDetails())
+        media_details_loader.add_value('images', json_source)
+        # media_details_loader.add_value('captions', literal_eval(json_source.get('jsonPhotos')))
+        yield media_details_loader.load_item()
+
 
     @classmethod
     def get_item(cls, value: Union[list, None]):

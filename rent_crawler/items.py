@@ -30,8 +30,12 @@ format_quintoandar_image_url = MapCompose(lambda img: "https://www.quintoandar.c
 fromat_piramide_images = MapCompose(lambda img: img['picture_full'])
 format_emcasa_image_url = MapCompose(lambda img: "https://res.cloudinary.com/emcasa/image/upload/" + img['filename'])
 format_emcasa_image_tag = MapCompose(lambda img: img['name'])
+format_vivareal_image_url = MapCompose(lambda img: f"https://resizedimgs.vivareal.com/fit-in/1600x720/named.images.sp/{img['id']}/image.jpg" )
+
 format_top_images = MapCompose(lambda img: img['urlPhoto'])
 format_top_captions = MapCompose(lambda img: img['desPhoto'])
+format_kogake_images = MapCompose(lambda img: img['picture_full'])
+format_kogake_captions = MapCompose(lambda img: img['photo_type'])
 
 remove_source = MapCompose(lambda location: location if location.pop('source', None) else location)
 
@@ -59,6 +63,12 @@ class TopAddress(Address):
     name = Field()
     location = Field()
 
+class KogakeAddress(Address):
+    rua = Field(input_processor=to_lower)
+    bairro = Field(input_processor=to_lower)
+    estado = Field()
+    cidade = Field()
+
 class AddressLoader(ItemLoader):
     default_item_class = Address
     default_input_processor = strip
@@ -78,6 +88,11 @@ class IptuCondoPrices(Prices):
 
 class QuintoAndarPrices(Prices):
     iptu_and_condo = Field()
+
+class KogakePrices(Prices):
+    price = Field()
+    condo = Field()
+    iptu = Field()
 
 class PricesLoader(ItemLoader):
     default_item_class = Prices
@@ -103,6 +118,14 @@ class EmCasaDetails(Details):
     suites = Field()
     bathrooms = Field()
 
+class KogakeDetails(Details):
+    size = Field(input_processor=bigger_than_zero)
+    rooms = Field()
+    garages = Field()
+    suites = Field()
+    bathrooms = Field()
+    utype = Field()
+
 class DetailsLoader(ItemLoader):
     default_item_class = Details
     default_input_processor = parse_float_or_int
@@ -114,13 +137,18 @@ class DetailsLoader(ItemLoader):
 class TextDetails(Item):
     type = Field()
 
-
 class VRZapTextDetails(TextDetails):
     description = Field(input_processor=strip)
     characteristics = Field(output_processor=Identity())
     title = Field()
     contact = Field(output_processor=Identity())
 
+class KogakeTextDetails(TextDetails):
+    description = Field(input_processor=strip)
+    characteristics = Field(output_processor=Identity())
+    title = Field()
+    contact = Field(output_processor=Identity())
+    type = Field()
 
 class TextDetailsLoader(ItemLoader):
     default_item_class = TextDetails
@@ -142,12 +170,16 @@ class PiramideMediaDetails(Item):
     video = Field()
 
 class VRZapMediaDetails(Item):
-    images = Field(input_processor=filter_images, output_processor=fromat_piramide_images)
+    images = Field(output_processor=format_vivareal_image_url)
     video = Field(input_processor=filter_videos)
 
 class TopimoveisMediaDetails(Item):
     images = Field(output_processor=format_top_images)
     captions = Field(output_processor=format_top_captions)
+
+class KogakeimoveisMediaDetails(Item):
+    images = Field(output_processor=format_kogake_images)
+    captions = Field(output_processor=format_kogake_captions)
 
 # PROPERTY ITEMS
 #-------------------------------------------
@@ -181,6 +213,7 @@ class PiramideRentalProperty(RentalProperty):
     text_details = Field(serializer=VRZapTextDetails)
     media = Field(serializer=PiramideMediaDetails)
     url = Field(output_processor=Join(''))
+    code_org = Field(serializer=str)
 
 class QuintoAndarProperty(RentalProperty):
     address = Field(serializer=QuintoAndarAddress)
@@ -210,13 +243,15 @@ class RentalPropertyLoader(ItemLoader):
 #-----------------------------------
 
 class SaleProperty(Item):
-    kind = Field(serializer=str)
-    code = Field(serializer=str)
+    #This are specific for each inmobiliaria
     address = Field(serializer=Address)
     prices = Field(serializer=Prices)
     details = Field(serializer=Details)
     text_details = Field(serializer=TextDetails)
     media = Field()
+    #This are general 
+    kind = Field(serializer=str)
+    code = Field(serializer=str)
     url = Field()
     item_id = Field()
 
@@ -235,6 +270,7 @@ class PiramideSaleProperty(SaleProperty):
     text_details = Field(serializer=VRZapTextDetails)
     media = Field(serializer=PiramideMediaDetails)
     url = Field(output_processor=Join(''))
+    code_org = Field(serializer=str)
 
 class TopSaleProperty(SaleProperty):
     address = Field(serializer=TopAddress)
@@ -248,6 +284,14 @@ class EmCasaSaleProperty(SaleProperty):
     prices = Field(serializer=Prices)
     details = Field(serializer=EmCasaDetails)
     media = Field(serializer=EmCasaMediaDetails)
+    url = Field(output_processor=Join(''))
+
+class KogakeSaleProperty(SaleProperty):
+    address = Field(serializer=KogakeAddress)
+    prices = Field(serializer=KogakePrices)
+    details = Field(serializer=KogakeDetails)
+    text_details = Field(serializer=KogakeTextDetails)
+    media = Field(serializer=KogakeimoveisMediaDetails)
     url = Field(output_processor=Join(''))
 
 class SalePropertyLoader(ItemLoader):

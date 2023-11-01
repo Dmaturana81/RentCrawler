@@ -1,0 +1,46 @@
+2023-10-03 07:33:29 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats',
+ 'scrapy.extensions.throttle.AutoThrottle']
+2023-10-03 07:33:29 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy_cloudflare_middleware.middlewares.CloudFlareMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2023-10-03 07:33:29 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2023-10-03 07:33:29 [scrapy.middleware] INFO: Enabled item pipelines:
+['rent_crawler.pipelines.RentCrawlerPipeline',
+ 'rent_crawler.pipelines.CorrectKind',
+ 'rent_crawler.pipelines.MongoPipeline']
+2023-10-03 07:33:29 [scrapy.core.engine] INFO: Spider opened
+2023-10-03 07:33:29 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2023-10-03 07:33:29 [scrapy.crawler] INFO: Overridden settings:
+{'AUTOTHROTTLE_DEBUG': True,
+ 'AUTOTHROTTLE_ENABLED': True,
+ 'AUTOTHROTTLE_MAX_DELAY': 15,
+ 'BOT_NAME': 'rent_crawler',
+ 'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+ 'COOKIES_DEBUG': True,
+ 'DOWNLOAD_DELAY': 10,
+ 'DOWNLOAD_TIMEOUT': 30,
+ 'LOG_FILE': '23_10_03_QA_spider_log.txt',
+ 'LOG_FORMATTER': 'rent_crawler.loggers.QuietLogFormatter',
+ 'NEWSPIDER_MODULE': 'rent_crawler.spiders',
+ 'SPIDER_MODULES': ['rent_crawler.spiders'],
+ 'TELNETCONSOLE_ENABLED': False,
+ 'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) '
+               'Gecko/20100101 Firefox/116.0'}

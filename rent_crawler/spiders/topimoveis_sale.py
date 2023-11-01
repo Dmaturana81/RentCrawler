@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, date
 import unidecode
 import scrapy
 from scrapy.loader import ItemLoader
@@ -78,6 +78,11 @@ class Topimoveis(scrapy.Spider):
     custom_settings = {
         'ELASTICSEARCH_INDEX': 'rent-quintoandar'
     }
+
+    @classmethod
+    def update_settings(cls, settings):
+        super().update_settings(settings)
+        settings.set("LOG_FILE", f'{date.today().strftime("%y_%m_%d")}_TIs_spider_log.txt', priority="spider")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
