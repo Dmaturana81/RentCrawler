@@ -4,9 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-scrapy = "==2.6.1"
+scrapy = "==2.6.3"
 scrapy-mongodb = "==0.12.0"
 redis = "==4.3.3"
+pyopenssl = "==22.1.0"
+cryptography = "==38.0.0"
+scrapy-cloudflare-middleware = "*"
+urllib3 = "<2"
 
 [dev-packages]
 

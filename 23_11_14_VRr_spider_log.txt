@@ -1,0 +1,243 @@
+2023-11-14 09:10:14 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats',
+ 'scrapy.extensions.throttle.AutoThrottle']
+2023-11-14 09:10:14 [twisted] CRITICAL: Unhandled error in Deferred:
+2023-11-14 09:10:14 [twisted] CRITICAL: 
+Traceback (most recent call last):
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/twisted/internet/defer.py", line 2000, in _inlineCallbacks
+    result = context.run(gen.send, result)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/crawler.py", line 101, in crawl
+    self.engine = self._create_engine()
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/crawler.py", line 115, in _create_engine
+    return ExecutionEngine(self, lambda _: self.stop())
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/core/engine.py", line 83, in __init__
+    self.downloader = downloader_cls(crawler)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/core/downloader/__init__.py", line 83, in __init__
+    self.middleware = DownloaderMiddlewareManager.from_crawler(crawler)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/middleware.py", line 59, in from_crawler
+    return cls.from_settings(crawler.settings, crawler)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/middleware.py", line 40, in from_settings
+    mwcls = load_object(clspath)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/utils/misc.py", line 61, in load_object
+    mod = import_module(module)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1206, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1178, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1128, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1206, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1178, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1142, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'scrapy_cloudflare_middleware'
+2023-11-14 09:10:14 [scrapy.crawler] INFO: Overridden settings:
+{'AUTOTHROTTLE_DEBUG': True,
+ 'AUTOTHROTTLE_ENABLED': True,
+ 'AUTOTHROTTLE_MAX_DELAY': 15,
+ 'BOT_NAME': 'rent_crawler',
+ 'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+ 'COOKIES_DEBUG': True,
+ 'DOWNLOAD_DELAY': 10,
+ 'DOWNLOAD_TIMEOUT': 30,
+ 'LOG_FILE': '23_11_14_VRs_spider_log.txt',
+ 'LOG_FORMATTER': 'rent_crawler.loggers.QuietLogFormatter',
+ 'NEWSPIDER_MODULE': 'rent_crawler.spiders',
+ 'SPIDER_MODULES': ['rent_crawler.spiders'],
+ 'TELNETCONSOLE_ENABLED': False,
+ 'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) '
+               'Gecko/20100101 Firefox/116.0'}
+2023-11-14 09:10:50 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats',
+ 'scrapy.extensions.throttle.AutoThrottle']
+2023-11-14 09:10:50 [twisted] CRITICAL: Unhandled error in Deferred:
+2023-11-14 09:10:50 [twisted] CRITICAL: 
+Traceback (most recent call last):
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/twisted/internet/defer.py", line 2000, in _inlineCallbacks
+    result = context.run(gen.send, result)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/crawler.py", line 101, in crawl
+    self.engine = self._create_engine()
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/crawler.py", line 115, in _create_engine
+    return ExecutionEngine(self, lambda _: self.stop())
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/core/engine.py", line 83, in __init__
+    self.downloader = downloader_cls(crawler)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/core/downloader/__init__.py", line 83, in __init__
+    self.middleware = DownloaderMiddlewareManager.from_crawler(crawler)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/middleware.py", line 59, in from_crawler
+    return cls.from_settings(crawler.settings, crawler)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/middleware.py", line 40, in from_settings
+    mwcls = load_object(clspath)
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy/utils/misc.py", line 61, in load_object
+    mod = import_module(module)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1206, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1178, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1149, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/scrapy_cloudflare_middleware/middlewares.py", line 3, in <module>
+    from cfscrape import get_tokens
+  File "/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/cfscrape/__init__.py", line 19, in <module>
+    from urllib3.util.ssl_ import create_urllib3_context, DEFAULT_CIPHERS
+ImportError: cannot import name 'DEFAULT_CIPHERS' from 'urllib3.util.ssl_' (/Users/matu/.local/share/virtualenvs/RentCrawler-C5MlWoIj/lib/python3.11/site-packages/urllib3/util/ssl_.py)
+2023-11-14 09:10:50 [scrapy.crawler] INFO: Overridden settings:
+{'AUTOTHROTTLE_DEBUG': True,
+ 'AUTOTHROTTLE_ENABLED': True,
+ 'AUTOTHROTTLE_MAX_DELAY': 15,
+ 'BOT_NAME': 'rent_crawler',
+ 'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+ 'COOKIES_DEBUG': True,
+ 'DOWNLOAD_DELAY': 10,
+ 'DOWNLOAD_TIMEOUT': 30,
+ 'LOG_FILE': '23_11_14_VRs_spider_log.txt',
+ 'LOG_FORMATTER': 'rent_crawler.loggers.QuietLogFormatter',
+ 'NEWSPIDER_MODULE': 'rent_crawler.spiders',
+ 'SPIDER_MODULES': ['rent_crawler.spiders'],
+ 'TELNETCONSOLE_ENABLED': False,
+ 'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) '
+               'Gecko/20100101 Firefox/116.0'}
+2023-11-14 09:14:10 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats',
+ 'scrapy.extensions.throttle.AutoThrottle']
+2023-11-14 09:14:10 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy_cloudflare_middleware.middlewares.CloudFlareMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2023-11-14 09:14:10 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2023-11-14 09:14:10 [scrapy.middleware] INFO: Enabled item pipelines:
+['rent_crawler.pipelines.RentCrawlerPipeline',
+ 'rent_crawler.pipelines.CorrectKind',
+ 'rent_crawler.pipelines.MongoPipeline']
+2023-11-14 09:14:10 [scrapy.core.engine] INFO: Spider opened
+2023-11-14 09:14:10 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2023-11-14 09:14:10 [scrapy.crawler] INFO: Overridden settings:
+{'AUTOTHROTTLE_DEBUG': True,
+ 'AUTOTHROTTLE_ENABLED': True,
+ 'AUTOTHROTTLE_MAX_DELAY': 15,
+ 'BOT_NAME': 'rent_crawler',
+ 'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+ 'COOKIES_DEBUG': True,
+ 'DOWNLOAD_DELAY': 10,
+ 'DOWNLOAD_TIMEOUT': 30,
+ 'LOG_FILE': '23_11_14_VRs_spider_log.txt',
+ 'LOG_FORMATTER': 'rent_crawler.loggers.QuietLogFormatter',
+ 'NEWSPIDER_MODULE': 'rent_crawler.spiders',
+ 'SPIDER_MODULES': ['rent_crawler.spiders'],
+ 'TELNETCONSOLE_ENABLED': False,
+ 'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) '
+               'Gecko/20100101 Firefox/116.0'}
+2023-11-14 09:14:34 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats',
+ 'scrapy.extensions.throttle.AutoThrottle']
+2023-11-14 09:14:34 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy_cloudflare_middleware.middlewares.CloudFlareMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2023-11-14 09:14:34 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2023-11-14 09:14:34 [scrapy.middleware] INFO: Enabled item pipelines:
+['rent_crawler.pipelines.RentCrawlerPipeline',
+ 'rent_crawler.pipelines.CorrectKind',
+ 'rent_crawler.pipelines.MongoPipeline']
+2023-11-14 09:14:34 [scrapy.core.engine] INFO: Spider opened
+2023-11-14 09:14:34 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2023-11-14 09:14:34 [scrapy.crawler] INFO: Overridden settings:
+{'AUTOTHROTTLE_DEBUG': True,
+ 'AUTOTHROTTLE_ENABLED': True,
+ 'AUTOTHROTTLE_MAX_DELAY': 15,
+ 'BOT_NAME': 'rent_crawler',
+ 'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+ 'COOKIES_DEBUG': True,
+ 'DOWNLOAD_DELAY': 10,
+ 'DOWNLOAD_TIMEOUT': 30,
+ 'LOG_FILE': '23_11_14_VRs_spider_log.txt',
+ 'LOG_FORMATTER': 'rent_crawler.loggers.QuietLogFormatter',
+ 'NEWSPIDER_MODULE': 'rent_crawler.spiders',
+ 'SPIDER_MODULES': ['rent_crawler.spiders'],
+ 'TELNETCONSOLE_ENABLED': False,
+ 'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) '
+               'Gecko/20100101 Firefox/116.0'}
+2023-11-14 09:51:59 [scrapy.addons] INFO: Enabled addons:
+[]
+2023-11-14 09:51:59 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats',
+ 'scrapy.extensions.throttle.AutoThrottle']
+2023-11-14 09:51:59 [scrapy.crawler] INFO: Overridden settings:
+{'AUTOTHROTTLE_DEBUG': True,
+ 'AUTOTHROTTLE_ENABLED': True,
+ 'AUTOTHROTTLE_MAX_DELAY': 15,
+ 'BOT_NAME': 'rent_crawler',
+ 'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+ 'COOKIES_DEBUG': True,
+ 'DOWNLOAD_DELAY': 10,
+ 'DOWNLOAD_TIMEOUT': 30,
+ 'LOG_FILE': '23_11_14_VRr_spider_log.txt',
+ 'LOG_FORMATTER': 'rent_crawler.loggers.QuietLogFormatter',
+ 'NEWSPIDER_MODULE': 'rent_crawler.spiders',
+ 'SPIDER_MODULES': ['rent_crawler.spiders'],
+ 'TELNETCONSOLE_ENABLED': False,
+ 'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) '
+               'Gecko/20100101 Firefox/116.0'}
+2023-11-14 09:51:59 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy_cloudflare_middleware.middlewares.CloudFlareMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2023-11-14 09:51:59 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2023-11-14 09:51:59 [scrapy.middleware] INFO: Enabled item pipelines:
+['rent_crawler.pipelines.RentCrawlerPipeline',
+ 'rent_crawler.pipelines.CorrectKind',
+ 'rent_crawler.pipelines.MongoPipeline']
+2023-11-14 09:51:59 [scrapy.core.engine] INFO: Spider opened
+2023-11-14 09:51:59 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
