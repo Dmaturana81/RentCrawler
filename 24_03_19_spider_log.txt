@@ -1,0 +1,2 @@
+2024-03-19 11:31:12 [scrapy.utils.log] INFO: Scrapy 2.11.0 started (bot: rent_crawler)
+2024-03-19 11:31:12 [scrapy.utils.log] INFO: Versions: lxml 4.9.3.0, libxml2 2.9.4, cssselect 1.2.0, parsel 1.8.1, w3lib 2.1.2, Twisted 22.10.0, Python 3.8.10 (v3.8.10:3d8993a744, May  3 2021, 08:55:58) - [Clang 6.0 (clang-600.0.57)], pyOpenSSL 22.1.0 (OpenSSL 3.0.5 5 Jul 2022), cryptography 38.0.0, Platform macOS-10.15.7-x86_64-i386-64bit
