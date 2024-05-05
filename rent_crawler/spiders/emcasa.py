@@ -52,7 +52,7 @@ class EmCasa(scrapy.Spider):
     @classmethod
     def update_settings(cls, settings):
         super().update_settings(settings)
-        settings.set("LOG_FILE", f'{date.today().strftime("%y_%m_%d")}_EC_spider_log.txt', priority="spider")
+        settings.set("LOG_FILE", f'./logs/{date.today().strftime("%y_%m_%d")}_EC_spider_log.txt', priority="spider")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

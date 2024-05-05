@@ -37,19 +37,20 @@ MONGODB_URI = 'mongodb://localhost:27017'
 MONGODB_DATABASE = 'houses_db'
 MONGODB_COLLECTION = 'houses'
 MONGODB_REPLICA_SET=None
-# MONGODB_UNIQUE_KEY = 'item_id'
-# MONGODB_ADD_TIMESTAMP = True
+MONGODB_UNIQUE_KEY = 'item_id'
+MONGODB_ADD_TIMESTAMP = True
 MONGODB_SEPARATE_COLLECTIONS = False
 
-ELASTICSEARCH_SERVERS = ['localhost']
-ELASTICSEARCH_UNIQ_KEY = 'code'
-ELASTICSEARCH_BUFFER_LENGTH = 250
+# ELASTICSEARCH_SERVERS = ['localhost']
+# ELASTICSEARCH_UNIQ_KEY = 'code'
+# ELASTICSEARCH_BUFFER_LENGTH = 250
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 # LOG_STDOUT = True
-LOG_FILE = f'{date.today().strftime("%y_%m_%d")}_spider_log.txt'
+ROOT_PATH = '/logs/'
+LOG_FILE = f'./logs/{date.today().strftime("%y_%m_%d")}_spider_log.txt'
 LOG_FORMATTER = 'rent_crawler.loggers.QuietLogFormatter'
 
 # HTTPERROR_ALLOW_ALL = True

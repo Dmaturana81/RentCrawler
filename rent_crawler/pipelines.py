@@ -3,7 +3,7 @@ import hashlib
 import json
 import logging
 
-# import redis as redis
+import redis as redis
 import pymongo
 
 from itemadapter import ItemAdapter
@@ -58,6 +58,15 @@ class CorrectKind:
         dict: The processed item with 'kind' corrected if needed.
     """
     def process_item(self, item, spider):
+        """Method that process scraped items.
+
+        Args:
+            item (_type_): item object
+            spider (_type_): spider object
+
+        Returns:
+            _type_: processed item
+        """
         if item['kind'] == 'Sale' and item['prices']['price'] < 100000:
             item['kind'] = 'Rent'
         elif item['kind'] == 'Rent' and item['prices']['price'] >= 100000:
@@ -83,29 +92,73 @@ class MongoPipeline:
         process_item: Store scraped item in MongoDB collection.
     """
 
-    collection_name = 'houses'
+    # collection_name = 'houses'
 
     def __init__(self, mongo_uri, mongo_db):
+        """Initialize the pipeline with MongoDB client.
+
+        Args:
+            mongo_uri (_type_): _description_
+            mongo_db (_type_): _description_
+        """
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
 
     @classmethod
     def from_crawler(cls, crawler):
+        """Create pipeline instance from Crawler.
+
+        Args:
+            crawler (_type_): the scrapy crawler object
+
+        Returns:
+            _type_: the pipeline instance
+        """
+        
         return cls(
             mongo_uri=crawler.settings.get('MONGO_URI'),
             mongo_db=crawler.settings.get('MONGO_DATABASE', 'houses_db')
         )
 
     def open_spider(self, spider):
+        """Initialize MongoDB client and database on spider open.
+
+        Args:
+            spider (_type_): the scrapy spider object
+        """
         self.client = pymongo.MongoClient(self.mongo_uri)
         self.db = self.client[self.mongo_db]
 
     def close_spider(self, spider):
+        """Close MongoDB client on spider close.
+
+        Args:
+            spider (_type_): _description_
+        """
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
-        # print(f"Inserted item {item['item_id']}")
+        """Store scraped item in MongoDB collection.
+
+        Args:
+            item (_type_): _description_
+            spider (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        # self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        #Try to insert in the properties collection, if the code exists will raise DuplicateError.
+        #In that case insert oon a temporal collection colled tmp
+        #create the code
+        item_dict = ItemAdapter(item).asdict()
+        try:
+            self.db['properties'].insert_one(item_dict)
+        except pymongo.errors.DuplicateKeyError:
+            self.db['tmp'].insert_one(item_dict)
+        finally:
+            if not self.db['houses_prices'].find_one_and_update({'code':item_dict['code']},{'$push':{'prices':item_dict['prices']}}):
+                self.db['houses_prices'].insert_one({'code':item_dict['code'],'prices':[item_dict['prices']]})
         return item
     
 class RedisDuplicatePipeline:
@@ -128,17 +181,43 @@ class RedisDuplicatePipeline:
     }
 
     def __init__(self, redis_host, redis_port):
+        """Initialize with Redis client.
+
+        Args:
+            redis_host (_type_): redis host
+            redis_port (_type_): redis port
+        """
         if redis_host is not None:
             self.redis_client = redis.Redis(host=redis_host, port=redis_port)
 
     @classmethod
     def from_crawler(cls, crawler):
+        """Create pipeline instance from Crawler.
+
+        Args:
+            crawler (_type_): the scrapy crawler object
+
+        Returns:
+            _type_: the pipeline instance
+        """
         settings = crawler.settings
         redis_host = settings.get('REDIS_HOST')
         redis_port = settings.get('REDIS_PORT', default=6379)
         return cls(redis_host, redis_port)
 
     def process_item(self, item, spider):
+        """Check for duplicate item in Redis, drop if found.
+
+        Args:
+            item (_type_): the scrapped item
+            spider (_type_): the scrapy spider object
+
+        Raises:
+            DropItem: If duplicate item is found
+
+        Returns:
+            _type_: the scrapped item
+        """
         if self.redis_client is None:
             return item
 
